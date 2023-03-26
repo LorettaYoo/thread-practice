@@ -23,7 +23,7 @@ class Account {
 }
 
 class Drawing extends Thread {
-    Account account;
+    final Account account;
     int drawingMoney;
     int nowMoney;
 
@@ -35,23 +35,25 @@ class Drawing extends Thread {
 
     @Override
     public void run() {
-        if (account.money - drawingMoney < 0) {
-            System.out.println(Thread.currentThread().getName() + " balance is insufficient!!!");
-            return;
+        synchronized (account){
+            if (account.money - drawingMoney < 0) {
+                System.out.println(Thread.currentThread().getName() + " balance is insufficient!!!");
+                return;
+            }
+
+            // sleep 放大问题发生性
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            account.money = account.money - drawingMoney;
+            nowMoney = nowMoney + drawingMoney;
+
+            System.out.println(account.name+" account balance: "+ account.money);
+            System.out.println(this.getName() +" money in hand: "+nowMoney);
         }
-
-        // sleep 放大问题发生性
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        account.money = account.money - drawingMoney;
-        nowMoney = nowMoney + drawingMoney;
-
-        System.out.println(account.name+" account balance: "+ account.money);
-        System.out.println(this.getName() +" money in hand: "+nowMoney);
     }
 }
 

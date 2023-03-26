@@ -25,7 +25,7 @@ class BuyTicket implements Runnable {
         }
     }
 
-    private void buy() throws InterruptedException {
+    private synchronized void buy() throws InterruptedException {
         if (ticketNums <= 0) {
             flag = false;
             return;
